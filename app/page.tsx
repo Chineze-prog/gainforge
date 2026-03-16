@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { HERO_CLASSES, HeroClass } from "@/lib/data";
+import XPBar from "@/components/XPBar";
+import StatBar from "@/components/StatBar";
 
 //the shape of the hero's data
 type Hero = {
@@ -33,10 +35,56 @@ export default function Home() {
   // when the onboarding is completed, show the dashboard placeholder
   if(hero){
     return (
-      <main style={{padding:40}}>
-        <h1>Welcome, {hero.heroName}!</h1>
-        <p>Class: {hero.heroClass.icon} {hero.heroClass.name}</p>
-        <p>Dashboard coming soon...</p>
+      <main style={{padding: 24, maxWidth: 480, margin: '0 auto'}}>
+        {/* Hero Header */}
+        <div style={{marginBottom: 24}}>
+          <div style={{
+            fontSize: 12,
+            color: '#a09ab8', 
+            letterSpacing: 2, 
+            textTransform: 'uppercase',
+          }}>
+            {hero.heroClass.icon} {hero.heroClass.name}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 4,
+            marginBottom: 16,
+          }}>
+            <h1 style={{fontSize: 24, fontWeight: 900}}>
+              {hero.heroName}
+            </h1>
+
+            <div style={{
+              background: 'rgba(245, 197, 66, 0.1)',
+              border: '1px solid rgba(245, 197, 66, 0.3)',
+              borderRadius: 99,
+              padding: '4px 16px',
+              fontSize: 13,
+              color: '#f5c542',
+              fontWeight: 700,
+            }}>
+              LVL 7
+            </div>
+          </div>
+
+          <XPBar xp={180} level={7} />
+        </div>
+        
+        {/* STATS */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          borderRadius: 20,
+          padding: 24,
+          border: '1px solid rgba(255, 255, 255, 0.07)',
+        }}>
+          <StatBar label="Strength" value={24} color="#e85d2a" />
+          <StatBar label="Endurance" value={31} color="#2a9e5a" />
+          <StatBar label="Agility" value={18} color="#7c3aed" />
+        </div>
       </main>
     )
   }
