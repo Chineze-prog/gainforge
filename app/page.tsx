@@ -1,9 +1,8 @@
 'use client' //anything that uses interactivity like state, event listeners, and browser APIs should run in the browser instead of server {run on the client side}
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { HERO_CLASSES, HeroClass } from "@/lib/data";
-import XPBar from "@/components/XPBar";
-import StatBar from "@/components/StatBar";
 
 //the shape of the hero's data
 type Hero = {
@@ -12,6 +11,8 @@ type Hero = {
 }
 
 export default function Home() {
+  const router = useRouter()
+
   // the current onboarding step the user is on
   const [step, setStep] = useState<number>(1)
 
@@ -21,72 +22,21 @@ export default function Home() {
   // the user's hero class
   const [selectedClass, setSelectedClass] = useState<HeroClass | null>(null)
 
-  // user's hero state
-  const [hero, setHero] = useState<Hero | null> (null)
-
   function onFinish(){
     if(!heroName.trim() || !selectedClass){
       return
     }
 
-    setHero({heroName: heroName.trim(), heroClass: selectedClass})
-  }
+    const hero: Hero = {
+      heroName: heroName.trim(),
+      heroClass: selectedClass,
+    }
 
-  // when the onboarding is completed, show the dashboard placeholder
-  if(hero){
-    return (
-      <main style={{padding: 24, maxWidth: 480, margin: '0 auto'}}>
-        {/* Hero Header */}
-        <div style={{marginBottom: 24}}>
-          <div style={{
-            fontSize: 12,
-            color: '#a09ab8', 
-            letterSpacing: 2, 
-            textTransform: 'uppercase',
-          }}>
-            {hero.heroClass.icon} {hero.heroClass.name}
-          </div>
+    // saving hero to local storage so the dashboard can read it
+    localStorage.setItem('gainforge_hero', JSON.stringify(hero))
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 4,
-            marginBottom: 16,
-          }}>
-            <h1 style={{fontSize: 24, fontWeight: 900}}>
-              {hero.heroName}
-            </h1>
-
-            <div style={{
-              background: 'rgba(245, 197, 66, 0.1)',
-              border: '1px solid rgba(245, 197, 66, 0.3)',
-              borderRadius: 99,
-              padding: '4px 16px',
-              fontSize: 13,
-              color: '#f5c542',
-              fontWeight: 700,
-            }}>
-              LVL 7
-            </div>
-          </div>
-
-          <XPBar xp={180} level={7} />
-        </div>
-        
-        {/* STATS */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.04)',
-          borderRadius: 20,
-          padding: 24,
-          border: '1px solid rgba(255, 255, 255, 0.07)',
-        }}>
-          <StatBar label="Strength" value={24} color="#e85d2a" />
-          <StatBar label="Endurance" value={31} color="#2a9e5a" />
-          <StatBar label="Agility" value={18} color="#7c3aed" />
-        </div>
-      </main>
-    )
+    // navigate to the dashboard
+    router.push('/dashboard')
   }
 
   return (
@@ -108,7 +58,7 @@ export default function Home() {
             type="text"
             placeholder="Enter your name..."
             value={heroName}
-            onChange={(name) => setHeroName(name.target.value)}
+            onChange={(e) => setHeroName(e.target.value)}
             style={{
               width: '100%',
               padding: '14px 18px',
@@ -161,7 +111,7 @@ export default function Home() {
                 style={{
                   padding: '20px 24px',
                   borderRadius: 16,
-                  border: `2px solid ${selectedClass?.id === hero_class.id ? hero_class.color: 'rgba(2555, 255, 255, 0.08)'}`,
+                  border: `2px solid ${selectedClass?.id === hero_class.id ? hero_class.color: 'rgba(255, 255, 255, 0.08)'}`,
                   background: selectedClass?.id === hero_class.id ? `${hero_class.color}18`: 'rgba(255, 255, 255, 0.03)',
                   cursor: 'pointer',
                   display: 'flex',
